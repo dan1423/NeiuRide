@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/txtDuringTripHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="82dp"
+            android:text="TextView" />
+
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/imgDuringTripImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/prisonmike"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp"
+            android:layout_marginTop="11dp"
+            android:layout_below="@+id/txtDuringTripHeading"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/txtDuringTripDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/txtDuringTripHeading"
+            android:layout_alignStart="@+id/txtDuringTripHeading"
+            android:layout_below="@+id/imgDuringTripImage"
+            android:layout_marginTop="24dp" />
+
+        <Button
+            android:id="@+id/btnDuringTripRideDecision"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtDuringTripDescription"
+            android:layout_marginTop="34dp"
+            android:layout_toStartOf="@+id/txtDuringTripDescription"
+            android:background="@color/Green"
+            android:text="GO" />
+
+        <Button
+            android:id="@+id/btnDuringTripCancelRide"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btnDuringTripRideDecision"
+            android:layout_marginLeft="38dp"
+            android:layout_marginStart="38dp"
+            android:layout_toEndOf="@+id/btnDuringTripRideDecision"
+            android:layout_toRightOf="@+id/btnDuringTripRideDecision"
+            android:background="@color/Red"
+            android:text="Cancel Ride" />
+
+        <ImageView
+            android:id="@+id/hideTripDialog"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            app:srcCompat="@drawable/ic_close_black_24dp" />
+
+        <TextView
+            android:id="@+id/txtDuringTripPassengerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imgDuringTripImage"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="46dp"
+            android:layout_toEndOf="@+id/imgDuringTripImage"
+            android:layout_toRightOf="@+id/imgDuringTripImage"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/txtDuringTripDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/txtDuringTripPassengerName"
+            android:layout_alignRight="@+id/txtDuringTripPassengerName"
+            android:layout_below="@+id/txtDuringTripPassengerName"
+            android:layout_marginTop="16dp"
+            android:text="TextView" />
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.app.danny.neiuber">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+
+
+
+<application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+            android:theme="@style/BagelTheme">
+        <activity android:name=".authentication.SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".authentication.Register" />
+    <activity android:name=".authentication.Login" />
+    <activity android:name=".menu.items.DriverProfileMenu" />
+    <activity android:name="com.app.danny.neiuber.authentication.MapTestActivity" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".Navigation"
+            android:label="@string/title_activity_navigation"
+            android:parentActivityName=".authentication.Login"
+            android:theme="@style/BagelTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.app.danny.neiuber.authentication.Login" />
+        </activity>
+        <activity android:name=".ride_history.DetailedRideHistory"></activity>
+    </application>
+
+</manifest>

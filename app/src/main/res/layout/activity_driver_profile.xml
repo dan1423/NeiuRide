@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.app.danny.neiuber.menu.items.DriverProfileMenu">
+
+    <RelativeLayout
+        android:layout_width="376dp"
+        android:layout_height="555dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="10dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/imgProfileImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/prisonmike"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="27dp" />
+
+        <TextView
+            android:id="@+id/txtProfilePhone"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_alignLeft="@+id/txtProfileLocation"
+            android:layout_alignStart="@+id/txtProfileLocation" />
+
+        <TextView
+            android:id="@+id/txtProfileLocation"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_marginBottom="15dp"
+            android:textSize="15sp"
+            android:layout_above="@+id/txtProfilePhone"
+            android:layout_alignLeft="@+id/txtProfileName"
+            android:layout_alignStart="@+id/txtProfileName" />
+
+        <TextView
+            android:id="@+id/txtProfileName"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_marginBottom="12dp"
+            android:textSize="15sp"
+            android:layout_above="@+id/txtProfileLocation"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:id="@+id/registrationDate"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:layout_alignEnd="@+id/txtProfilePhone"
+            android:layout_alignLeft="@+id/txtProfilePhone"
+            android:layout_alignRight="@+id/txtProfilePhone"
+            android:layout_alignStart="@+id/txtProfilePhone"
+            android:layout_below="@+id/txtProfilePhone"
+            android:layout_marginTop="19dp" />
+
+        <TextView
+            android:id="@+id/txtProfileNumberOfRides"
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_below="@+id/registrationDate"
+            android:layout_alignLeft="@+id/registrationDate"
+            android:layout_alignStart="@+id/registrationDate" />
+
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

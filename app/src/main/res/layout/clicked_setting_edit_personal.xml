@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+    <RelativeLayout
+        android:id="@+id/layoutSetting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/imgPersonalSettingImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="27dp"
+            android:src="@drawable/prisonmike"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp" />
+
+        <TextView
+            android:id="@+id/txtPersonalSettingName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_alignEnd="@+id/imgPersonalSettingImage"
+            android:layout_alignLeft="@+id/imgPersonalSettingImage"
+            android:layout_alignRight="@+id/imgPersonalSettingImage"
+            android:layout_alignStart="@+id/imgPersonalSettingImage"
+            android:layout_below="@+id/imgPersonalSettingImage"
+            android:layout_marginTop="30dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/txtPersonalSettingEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_alignEnd="@+id/txtPersonalSettingName"
+            android:layout_alignLeft="@+id/txtPersonalSettingName"
+            android:layout_alignRight="@+id/txtPersonalSettingName"
+            android:layout_alignStart="@+id/txtPersonalSettingName"
+            android:layout_below="@+id/txtPersonalSettingName"
+            android:layout_marginTop="13dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/txtPersonalSettingPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_alignEnd="@+id/txtPersonalSettingEmail"
+            android:layout_alignLeft="@+id/txtPersonalSettingEmail"
+            android:layout_alignRight="@+id/txtPersonalSettingEmail"
+            android:layout_alignStart="@+id/txtPersonalSettingEmail"
+            android:layout_below="@+id/txtPersonalSettingEmail"
+            android:layout_marginTop="12dp"
+            android:text="TextView" />
+
+        <ImageView
+            android:id="@+id/arrowBackToSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="40dp"
+            android:layout_height="0dp"
+            android:layout_toRightOf="@+id/txtPersonalSettingEmail"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_mode_edit_black_24dp"
+            android:layout_alignTop="@+id/txtPersonalSettingEmail" />
+
+
+    </RelativeLayout>
+</LinearLayout>
