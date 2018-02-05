@@ -25,9 +25,12 @@
             android:src="@drawable/prisonmike"
             app:civ_border_color="#FF000000"
             app:civ_border_width="2dp"
-            android:layout_marginTop="11dp"
+            android:layout_marginTop="16dp"
             android:layout_below="@+id/txtDuringTripHeading"
-            android:layout_centerHorizontal="true" />
+            android:layout_alignLeft="@+id/btnDuringTripRideDecision"
+            android:layout_alignStart="@+id/btnDuringTripRideDecision"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp" />
 
         <TextView
             android:id="@+id/txtDuringTripDescription"
@@ -85,10 +88,20 @@
             android:id="@+id/txtDuringTripDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/txtDuringTripPassengerName"
-            android:layout_alignRight="@+id/txtDuringTripPassengerName"
-            android:layout_below="@+id/txtDuringTripPassengerName"
-            android:layout_marginTop="16dp"
-            android:text="TextView" />
+            android:text="TextView"
+            android:layout_alignBottom="@+id/imgDuringTripImage"
+            android:layout_alignLeft="@+id/txtDuringTripPassengerName"
+            android:layout_alignStart="@+id/txtDuringTripPassengerName"
+            android:layout_marginBottom="32dp" />
+
+        <Button
+            android:id="@+id/btnDuringTripGetDirections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnDuringTripRideDecision"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="43dp"
+            android:text="Get Directions"
+            android:visibility="gone" />
     </RelativeLayout>
 </LinearLayout>

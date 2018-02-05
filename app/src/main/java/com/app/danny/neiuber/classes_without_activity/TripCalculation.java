@@ -12,7 +12,7 @@ import java.util.Locale;
  * This class is responsible for calcualting distance between starting location of
  * passenger request to ending location and the total trip time.
  *
- * NOTE:remove convert methods and use CoordsConverter class
+ * NOTE:remove convert methods and use CoordsToAddressConverter class
  */
 
 public class TripCalculation {

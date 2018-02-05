@@ -28,8 +28,10 @@ import com.app.danny.neiuber.classes_without_activity.Route;
 import com.app.danny.neiuber.classes_without_activity.TripSaver;
 import com.app.danny.neiuber.classes_without_activity.TimeFormatter;
 import com.app.danny.neiuber.classes_without_activity.TripCalculation;
-import com.app.danny.neiuber.dialog_fragments.GoingToPassengerLocationDialog;
+import com.app.danny.neiuber.dialog_fragments.DialogObject;
+import com.app.danny.neiuber.dialog_fragments.DialogObjectSetter;
 import com.app.danny.neiuber.dialog_fragments.RideRequestDialog;
+import com.app.danny.neiuber.dialog_fragments.TripDialogFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -83,7 +85,7 @@ dealing with ride history object, wondering if constructor has too many argument
  */
 
 public class MapMenu extends Fragment
-        implements  OnMapReadyCallback,LocationListener, RideRequestDialog.AcceptRequestListener, GoingToPassengerLocationDialog.GoToPassengerLocation {
+        implements  OnMapReadyCallback,LocationListener, RideRequestDialog.AcceptRequestListener, TripDialogFragment.ChangeDialog{
     GoogleMap gMap;
     MapView mMapView;
     View mView, requestView,tripView;
@@ -91,8 +93,8 @@ public class MapMenu extends Fragment
     LocationManager locationManager;
     LocationListener locationListener;
     Button btndriverStatus, btnEnd;
-    protected double currentLat = 0.0;
-    protected double currentLng = 0.0;
+    public double currentLat = 0.0;
+    public double currentLng = 0.0;
     protected Marker posMarker;
     private boolean isOnline = false;
     private String rideStartTime = "";
@@ -110,7 +112,9 @@ public class MapMenu extends Fragment
     private Timer locationUpdateTimer;//updates location
 
     boolean driverAccept = false;
-
+    DialogObject[] arayOfDialogObjects = new DialogObject[4];
+    int counterForArrayOfDialogObjects = 0;
+    private TripDialogFragment tdf;
 
 
 
@@ -137,7 +141,7 @@ public class MapMenu extends Fragment
         showTripDialog =(ImageView) mView.findViewById(R.id.showTripDialog);
         showTripDialog.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-             //  openGoingToPassengerDialog();
+             tdf.getDialog().show();
             }
         });
 
@@ -510,17 +514,48 @@ public class MapMenu extends Fragment
     @Override
     public void onFinishRideRequestDialog(boolean accepted) {
         if(accepted){
-            openGoingToPassengerDialog();
             showTripDialog.setVisibility(View.VISIBLE);
+            setArrayOfDialogObjects();
         }
+        //set array of dialog objects
     }
 
     @Override
-    public void onGoToPassengerLocationClicked(boolean accepted) {
+    public void onChangeDialog() {
+        showDialog();
+    }
+
+    private void setArrayOfDialogObjects(){
+       arayOfDialogObjects = new DialogObjectSetter( Double.valueOf(hashMapOfRideRequest.get("StartingLat")),
+                                                Double.valueOf(hashMapOfRideRequest.get("StartingLng")),
+                                                Double.valueOf(hashMapOfRideRequest.get("EndingLat")),
+                                                 Double.valueOf(hashMapOfRideRequest.get("EndingLng")),
+                                                hashMapOfRideRequest.get("PassengerName"),getContext()).getDialogs();
+
+
+        showDialog();
+    }
+
+    private void showDialog(){
+
+        if(counterForArrayOfDialogObjects < 4){
+            FragmentManager fm = getFragmentManager();
+            tdf = new TripDialogFragment();
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("current_dialog",arayOfDialogObjects[counterForArrayOfDialogObjects]);
+            counterForArrayOfDialogObjects+=1;
+
+            tdf.setArguments(bundle);
+            tdf.setTargetFragment(MapMenu.this, 112);
+            tdf.show(fm, "Trip");
+        }
 
     }
 
-    public void showPassengerRequest() {
+
+
+    private void showPassengerRequest() {
             FragmentManager fm = getFragmentManager();
             RideRequestDialog rrd =  RideRequestDialog.newInstance("Ride Request");
 
@@ -535,41 +570,8 @@ public class MapMenu extends Fragment
         }
 
 
-        public void openGoingToPassengerDialog() {
-            FragmentManager fm = getFragmentManager();
-            GoingToPassengerLocationDialog dt = GoingToPassengerLocationDialog.newInstance("Some Title");
 
-            Bundle bundle = new Bundle();
-            bundle.putString("name",hashMapOfRideRequest.get("PassengerName"));
-            bundle.putString("distance","2.3mi");
-            bundle.putString("heading","heading to passenger's location");
-            bundle.putDouble("starting_lat",Double.parseDouble(hashMapOfRideRequest.get("StartingLat")));
-            bundle.putDouble("starting_lng",Double.parseDouble(hashMapOfRideRequest.get("StartingLng")));
-            bundle.putDouble("ending_lat",Double.parseDouble(hashMapOfRideRequest.get("EndingLat")));
-            bundle.putDouble("ending_lng",Double.parseDouble(hashMapOfRideRequest.get("EndingLng")));
 
-            dt.setArguments(bundle);
-           dt.show(fm, "fragment_edit_name");
-
-        }
-
-    public void openArriveAtPassengerLocation() {
-        FragmentManager fm = getFragmentManager();
-        GoingToPassengerLocationDialog dt = GoingToPassengerLocationDialog.newInstance("Some Title");
-
-        Bundle bundle = new Bundle();
-        bundle.putString("name",hashMapOfRideRequest.get("PassengerName"));
-        bundle.putString("distance","2.3mi");
-        bundle.putString("heading","heading to passenger's location");
-        bundle.putDouble("starting_lat",Double.parseDouble(hashMapOfRideRequest.get("StartingLat")));
-        bundle.putDouble("starting_lng",Double.parseDouble(hashMapOfRideRequest.get("StartingLng")));
-        bundle.putDouble("ending_lat",Double.parseDouble(hashMapOfRideRequest.get("EndingLat")));
-        bundle.putDouble("ending_lng",Double.parseDouble(hashMapOfRideRequest.get("EndingLng")));
-
-        dt.setArguments(bundle);
-        dt.show(fm, "fragment_edit_name");
-
-    }
 
 
     /*Method utilizes TimeFormatter class to convert start time, endtime to  needed formats(and calculates total ride time to minutes)

@@ -12,13 +12,13 @@ import java.util.Locale;
  * Responsible for converting longitude and latitude into address by using Google's Geocoder API
  */
 
-public class CoordsConverter {
+public class CoordsToAddressConverter {
 
     private double latitude;
     private double longitude;
     Context context;
 
-    public CoordsConverter(double latitude, double longitude, Context context) {
+    public CoordsToAddressConverter(double latitude, double longitude, Context context) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.context = context;

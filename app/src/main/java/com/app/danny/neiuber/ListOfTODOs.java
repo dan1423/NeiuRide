@@ -15,6 +15,8 @@ public class ListOfTODOs {
      * Fix entire application front-end design
      * better names for layout activities
      * use dialog fragment for privacy edit instead of fragment
+     * Remove distance calculation from TripCAlculation class and use DistancecALCULATION INSTEAD
+     * Break down TripCalculation as many of its methods are used in other classes/activities
      */
 
     /******BUGS******
