@@ -6,7 +6,7 @@ package com.app.danny.neiuber.classes_without_activity;
 
 public class Route {
 
-   
+  
     public Route(){
 
     }

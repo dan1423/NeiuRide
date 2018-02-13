@@ -26,9 +26,8 @@
         <activity android:name=".authentication.Register" />
     <activity android:name=".authentication.Login" />
     <activity android:name=".menu.items.DriverProfileMenu" />
-    <activity android:name="com.app.danny.neiuber.authentication.MapTestActivity" />
 
-        <meta-data
+    <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 

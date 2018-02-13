@@ -1,5 +1,7 @@
 package com.app.danny.neiuber.classes_without_activity;
 
+import android.util.Log;
+
 /**
  * Created by danny on 2/4/18.
  */

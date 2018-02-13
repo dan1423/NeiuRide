@@ -1,17 +1,16 @@
 package com.app.danny.neiuber.menu.items;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.danny.neiuber.DriverLocation;
+import com.app.danny.neiuber.classes_without_activity.CurrentLocation;
 import com.app.danny.neiuber.classes_without_activity.CurrentServerTime;
 import com.app.danny.neiuber.R;
 import com.app.danny.neiuber.classes_without_activity.Route;
@@ -37,10 +36,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -59,14 +58,17 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import android.os.Handler;
 //import com.google.android.gms.location.LocationListener;
 
 
@@ -85,39 +87,38 @@ dealing with ride history object, wondering if constructor has too many argument
  */
 
 public class MapMenu extends Fragment
-        implements  OnMapReadyCallback,LocationListener, RideRequestDialog.AcceptRequestListener, TripDialogFragment.ChangeDialog{
+        implements   RideRequestDialog.AcceptRequestListener, TripDialogFragment.ChangeDialog,
+        TripDialogFragment.CancelAllTripDialogs, TripDialogFragment.GetDirection{
     GoogleMap gMap;
-    MapView mMapView;
-    View mView, requestView,tripView;
+    MapView mapView;
 
-    LocationManager locationManager;
-    LocationListener locationListener;
+    protected Marker posMarker;
+
+    View mView, requestView,tripView;
+    private TextView textPassengerName, textRequestDistance, textRequestHeading, textRequestTimer;
+    private ImageView  showTripDialog;
     Button btndriverStatus, btnEnd;
+
     public double currentLat = 0.0;
     public double currentLng = 0.0;
-    protected Marker posMarker;
+
     private boolean isOnline = false;
     private String rideStartTime = "";
     private String rideEndTime = "";
-    private TextView textPassengerName, textRequestDistance, textRequestHeading, textRequestTimer;
-    private ImageView  showTripDialog;
     int countMarkerUpdate = 0;
     HashMap<String, String> hashMapOfUserInfo;
     HashMap  <String, String> hashMapOfRideRequest;
 
-
     int lc = 1;
     int la = 1;
-
-    private Timer locationUpdateTimer;//updates location
-
-    boolean driverAccept = false;
+    private Timer locationUpdateTimer;//updates location;
     DialogObject[] arayOfDialogObjects = new DialogObject[4];
     int counterForArrayOfDialogObjects = 0;
     private TripDialogFragment tdf;
 
+    Handler handler;
 
-
+    CurrentLocation currentLocation;
 
     public MapMenu() {
 
@@ -126,9 +127,15 @@ public class MapMenu extends Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         hashMapOfUserInfo = (HashMap<String,String>) getActivity().getIntent().getSerializableExtra("driver_info");
-        runOnApplicationLoad();
+        currentLocation = new CurrentLocation(getContext());
+
+
+        startGettingCurrentLocation();
+    }
+
+    public void getLocationNow(){
+        Toast.makeText(getContext(),"CUR"+ Arrays.toString(currentLocation.getCurrentLocation()),Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -145,10 +152,115 @@ public class MapMenu extends Fragment
             }
         });
 
+        mapView = (MapView) mView.findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+
         setButtonFunctions();
+
 
         return mView;
     }
+
+
+    /*****************MAPVIEW OVERRIDE***************/
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                gMap = mMap;
+                CameraUpdate center =
+                        CameraUpdateFactory.newLatLng(new LatLng(41.8781,
+                                -87.6298));
+                CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+
+                posMarker = gMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(41.8781,  -87.6298)));
+
+                gMap.moveCamera(center);
+                gMap.animateCamera(zoom);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+
+
+    public void updateMarkerPosition(double lat, double lng) {
+        if(posMarker != null) {
+            CameraUpdate center =
+                    CameraUpdateFactory.newLatLng(new LatLng(lat,
+                            lng));
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
+            posMarker.setPosition(new LatLng(lat,lng));
+
+            gMap.moveCamera(center);
+            gMap.animateCamera(zoom);
+
+        }
+
+
+    }
+
+    //initialize thread to run every 5 seconds to get current location
+    public void startGettingCurrentLocation(){
+        handler = new Handler();
+       final Runnable m_handlerTask = new Runnable() {
+            @Override
+            public void run() {
+               getCurrentLocation();
+                handler.postDelayed(this, 5000);//repeat every 5 seconds
+
+            }
+        };
+
+        m_handlerTask.run();
+
+    }
+
+    public void getCurrentLocation(){
+        double[] curLoc = currentLocation.getCurrentLocation();
+        currentLat = curLoc[0];
+        currentLng = curLoc[1];
+      // Toast.makeText(getContext(),"FROM MAPMENU: "+currentLat+"::"+currentLng,Toast.LENGTH_SHORT).show();
+       updateMarkerPosition(currentLat,currentLng);
+    }
+
+
+
 
     public void setButtonFunctions() {
        btnEnd.setVisibility(View.GONE);
@@ -188,6 +300,7 @@ public class MapMenu extends Fragment
     public void handleGoingOnline(){
         btndriverStatus.setText("Online");
         isOnline = true;
+
         new GoOnline().execute();
         //after user goes online, start updating location, and checking passenger request
         locationUpdateTimer = new Timer();
@@ -202,129 +315,7 @@ public class MapMenu extends Fragment
     }
 
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
 
-        MapsInitializer.initialize(getContext());
-        gMap = googleMap;
-        LatLng latlng = new LatLng(41.992541, -87.689902);
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        CameraUpdate center =
-                CameraUpdateFactory.newLatLng(latlng);
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
-
-        posMarker = gMap.addMarker(new MarkerOptions()
-                .position(latlng)
-                .title("Chicago"));
-
-        googleMap.moveCamera(center);
-        googleMap.animateCamera(zoom);
-
-    }
-
-
-    private void runOnApplicationLoad() {
-
-        final Criteria criteria = new Criteria();
-
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        criteria.setSpeedRequired(true);
-        criteria.setAltitudeRequired(false);
-        criteria.setBearingRequired(false);
-        criteria.setCostAllowed(true);
-        criteria.setPowerRequirement(Criteria.POWER_LOW);
-        //Acquire a reference to the system Location Manager
-
-        locationManager = (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
-
-        // Define a listener that responds to location updates
-        locationListener = new LocationListener() {
-
-            public void onLocationChanged(Location newLocation) {
-                //gets position
-                currentLat = newLocation.getLatitude();
-                currentLng = newLocation.getLongitude();
-            }
-
-            //not entirely sure what these do yet
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-            }
-
-            public void onProviderEnabled(String provider) {
-            }
-
-            public void onProviderDisabled(String provider) {
-            }
-
-        };
-        updateLocationOnMap();
-    }
-
-    private void updateLocationOnMap() {
-
-        if (ActivityCompat.checkSelfPermission(getContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getContext(),
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                            android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    10);
-        } else {
-            // Register the listener with the Location Manager to receive location updates
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 1, locationListener);
-            Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            Double dLon = 0.0;
-            Double dLat = 0.0;
-
-            while(dLon == null){
-                 dLon = (Double) loc.getLongitude();
-                 dLat = (Double) loc.getLatitude();
-            }
-            currentLat = loc.getLatitude();
-            currentLng = loc.getLongitude();
-
-        }
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        updateLocationOnMap();
-    }
-
-    @Override
-    public void onPause() {
-        locationManager.removeUpdates(this);
-        super.onPause();
-    }
-
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mMapView = (MapView) mView.findViewById(R.id.map);
-        if (mMapView != null) {
-            mMapView.onCreate(null);
-            mMapView.onResume();
-            mMapView.getMapAsync(this);
-        }
-    }
-
-    //as user moves, we want to reset the marker to his location
-    public void updateMapMarker() {
-        posMarker.remove();
-        LatLng ll = new LatLng(41.994888, -87.690106);
-        posMarker = gMap.addMarker(new MarkerOptions()
-                .position(ll)
-                .title("UpdateCount: " + countMarkerUpdate));
-        countMarkerUpdate++;
-    }
-    public void testMapStuff() {
-        getActivity().startService(new Intent(getActivity(), DriverLocation.class));
-    }
 
     private class GoOnline extends AsyncTask<String, Integer, String> {
         @Override
@@ -525,6 +516,18 @@ public class MapMenu extends Fragment
         showDialog();
     }
 
+    @Override
+    public void onButtonCancel() {
+        handleGoingOffline();
+        showTripDialog.setVisibility(View.GONE);
+        resetTripInfo();
+    }
+
+    @Override
+    public void onButtonGetDirection(double lat, double lng) {
+        getDirections(currentLocation.getCurrentLocation()[0],currentLocation.getCurrentLocation()[1],lat,lng);
+    }
+
     private void setArrayOfDialogObjects(){
        arayOfDialogObjects = new DialogObjectSetter( Double.valueOf(hashMapOfRideRequest.get("StartingLat")),
                                                 Double.valueOf(hashMapOfRideRequest.get("StartingLng")),
@@ -553,7 +556,9 @@ public class MapMenu extends Fragment
 
     }
 
-
+    private void resetTripInfo(){
+        counterForArrayOfDialogObjects = 0;
+    }
 
     private void showPassengerRequest() {
             FragmentManager fm = getFragmentManager();
@@ -631,22 +636,16 @@ public class MapMenu extends Fragment
             Toast.makeText(getContext(), sg,Toast.LENGTH_LONG).show();
         }
 
-    /*---------------------------DEFAULT OVERRIDDEN METHODS------------------------------------------*/
-   @Override
-    public void onLocationChanged(Location location) {
-    }
+
+    private void getDirections(double startingLat, double startingLng,double endlingLat, double endingLng){
+        String uri = "http://maps.google.com/maps?f=d&hl=en&saddr="+startingLat+","+startingLng+"&daddr="+endlingLat+","+endingLng;
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK&Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(Intent.createChooser(intent, ""));
 
 
-    @Override
-    public void onProviderDisabled(String provider) {
+
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
     }
 

@@ -1,6 +1,6 @@
 package com.app.danny.neiuber.dialog_fragments;
 
-import com.app.danny.neiuber.R;
+import android.content.Context;
 
 import java.io.Serializable;
 
@@ -15,13 +15,15 @@ public class DialogObject implements Serializable{
     private String buttonText;
     private float totalMiles;
     private boolean isMoving; //this decides whether we show the Get Directions button
+    private double[] destination = new double[2];
 
-    public DialogObject(String passengerName,String heading, String buttonText, float totalMiles, boolean isMoving) {
+    public DialogObject(String passengerName,String heading, String buttonText, float totalMiles, boolean isMoving, double[] destination) {
         this.passengerName = passengerName;
         this.heading = heading;
         this.buttonText = buttonText;
         this.totalMiles = totalMiles;
         this.isMoving = isMoving;
+        this.destination = destination;
     }
 
     public String getPassengerName() {
@@ -63,4 +65,13 @@ public class DialogObject implements Serializable{
     public void setMoving(boolean moving) {
         isMoving = moving;
     }
+
+    public double[] getDestination() {
+        return destination;
+    }
+
+    public void setDestination(double[] destination) {
+        this.destination = destination;
+    }
+
 }

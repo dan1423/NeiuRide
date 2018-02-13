@@ -59,8 +59,8 @@ public class SplashScreen extends Activity {
 
     //if user is logged in, open homepage, otherwise send to log in page
     private void checkIfUserIsLoggedIn() {
-       // Intent in = new Intent(SplashScreen.this, MapTestActivity.class);
-       // startActivity(in);
+        //Intent in = new Intent(SplashScreen.this, MapTestActivity.class);
+        //startActivity(in);
 
        if(SavedUserInfo.getUserInfo(SplashScreen.this).length() == 0) {//user isn't logged in, send to Login activity
           sendToLogin();
