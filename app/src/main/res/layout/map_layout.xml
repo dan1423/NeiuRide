@@ -28,14 +28,14 @@
 
         <Button
             android:id="@+id/btnEndRide"
-            android:background="@drawable/end_ride_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="End"
-            android:layout_below="@+id/btnDriverStatus"
             android:layout_alignLeft="@+id/btnDriverStatus"
             android:layout_alignStart="@+id/btnDriverStatus"
-            android:layout_marginTop="23dp" />
+            android:layout_below="@+id/btnDriverStatus"
+            android:layout_marginTop="23dp"
+            android:background="@drawable/end_ride_button"
+            android:text="End Ride" />
 
         <ImageView
             android:id="@+id/showTripDialog"

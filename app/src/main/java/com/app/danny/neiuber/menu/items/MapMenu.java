@@ -1,5 +1,6 @@
 package com.app.danny.neiuber.menu.items;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -157,6 +159,8 @@ public class MapMenu extends Fragment
 
         setButtonFunctions();
 
+        InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mView.getWindowToken(), 0);
 
         return mView;
     }
@@ -255,7 +259,7 @@ public class MapMenu extends Fragment
         double[] curLoc = currentLocation.getCurrentLocation();
         currentLat = curLoc[0];
         currentLng = curLoc[1];
-      // Toast.makeText(getContext(),"FROM MAPMENU: "+currentLat+"::"+currentLng,Toast.LENGTH_SHORT).show();
+     //  Toast.makeText(getContext(),"FROM MAPMENU: "+currentLat+"::"+currentLng,Toast.LENGTH_SHORT).show();
        updateMarkerPosition(currentLat,currentLng);
     }
 
@@ -281,9 +285,7 @@ public class MapMenu extends Fragment
 
         btnEnd.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-                CurrentServerTime tm = new CurrentServerTime();
-                rideEndTime = tm.getCurrentTime();
-                afterRideHasFinished();
+               onRideEnded();
             }
         });
 
@@ -505,8 +507,7 @@ public class MapMenu extends Fragment
     @Override
     public void onFinishRideRequestDialog(boolean accepted) {
         if(accepted){
-            showTripDialog.setVisibility(View.VISIBLE);
-            setArrayOfDialogObjects();
+           onRideAccepted();
         }
         //set array of dialog objects
     }
@@ -522,6 +523,14 @@ public class MapMenu extends Fragment
         showTripDialog.setVisibility(View.GONE);
         resetTripInfo();
     }
+
+    private void onRideAccepted(){
+        showTripDialog.setVisibility(View.VISIBLE);
+        setArrayOfDialogObjects();
+        CurrentServerTime tm = new CurrentServerTime();
+        rideStartTime = tm.getCurrentTime();
+    }
+
 
     @Override
     public void onButtonGetDirection(double lat, double lng) {
@@ -540,24 +549,35 @@ public class MapMenu extends Fragment
     }
 
     private void showDialog(){
-
+        Toast.makeText(getContext(),"dialog count"+counterForArrayOfDialogObjects,Toast.LENGTH_LONG).show();
         if(counterForArrayOfDialogObjects < 4){
             FragmentManager fm = getFragmentManager();
             tdf = new TripDialogFragment();
 
             Bundle bundle = new Bundle();
             bundle.putSerializable("current_dialog",arayOfDialogObjects[counterForArrayOfDialogObjects]);
-            counterForArrayOfDialogObjects+=1;
 
             tdf.setArguments(bundle);
             tdf.setTargetFragment(MapMenu.this, 112);
             tdf.show(fm, "Trip");
+
+            //show button end Ride button
+            if(counterForArrayOfDialogObjects > 2){//only show end button when driver has picked up passenger
+                btnEnd.setVisibility(View.VISIBLE);
+            }
+
+            counterForArrayOfDialogObjects+=1;//for next dialog in the array to be shown
+        }else{
+            onRideEnded();
+
         }
 
     }
 
     private void resetTripInfo(){
         counterForArrayOfDialogObjects = 0;
+        showTripDialog.setVisibility(View.INVISIBLE);
+        btnEnd.setVisibility(View.INVISIBLE);
     }
 
     private void showPassengerRequest() {
@@ -576,7 +596,14 @@ public class MapMenu extends Fragment
 
 
 
+    private void onRideEnded(){
+        Toast.makeText(getContext(),"Ride has ended",Toast.LENGTH_LONG).show();
+        resetTripInfo();
+        CurrentServerTime tm = new CurrentServerTime();
+        rideEndTime = tm.getCurrentTime();
+        afterRideHasFinished();
 
+    }
 
 
     /*Method utilizes TimeFormatter class to convert start time, endtime to  needed formats(and calculates total ride time to minutes)
@@ -602,7 +629,6 @@ public class MapMenu extends Fragment
         }
 
         public void calculateTrip(  HashMap<String, String> rideMap, String totalTime){
-          //  Toast.makeText(getContext(),hashMapOfRideRequest.toString(),Toast.LENGTH_LONG).show();
             double sLat = Double.valueOf(hashMapOfRideRequest.get("StartingLat"));
             double sLng = Double.valueOf(hashMapOfRideRequest.get("StartingLng"));
             double eLat =    Double.valueOf(hashMapOfRideRequest.get("EndingLat"));
@@ -626,7 +652,7 @@ public class MapMenu extends Fragment
             historyMap.put("startTime",rideMap.get("startTime"));
             historyMap.put("endTime",rideMap.get("endTime"));
 
-           saveRideHistory(historyMap);
+            // saveRideHistory(historyMap);
         }
 
 
@@ -637,14 +663,12 @@ public class MapMenu extends Fragment
         }
 
 
+        //if user decides to get directions, this method will be called after button press from inside Trip Dialog Fragment
     private void getDirections(double startingLat, double startingLng,double endlingLat, double endingLng){
         String uri = "http://maps.google.com/maps?f=d&hl=en&saddr="+startingLat+","+startingLng+"&daddr="+endlingLat+","+endingLng;
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK&Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivity(Intent.createChooser(intent, ""));
-
-
-
     }
 
     }

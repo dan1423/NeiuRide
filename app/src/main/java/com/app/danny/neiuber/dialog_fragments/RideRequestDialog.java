@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -79,7 +80,7 @@ public class RideRequestDialog extends DialogFragment {
 
         requestView = inflater.inflate(R.layout.ride_request_dialog, null);//set view for dialog(ride requests)
         getDialog().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         textPassengerName = requestView.findViewById(R.id.requestDialogName);
         textRequestDistance = requestView.findViewById(R.id.requestDialogDistance);
         textRequestHeading = requestView.findViewById(R.id.requestDialogHeading);
@@ -104,6 +105,9 @@ public class RideRequestDialog extends DialogFragment {
         });
 
         getBundleArgs();
+
+        InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(requestView.getWindowToken(), 0);
         return  requestView;
     }
 

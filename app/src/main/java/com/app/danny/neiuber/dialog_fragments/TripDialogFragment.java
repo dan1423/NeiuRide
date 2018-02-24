@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,19 +64,21 @@ public class TripDialogFragment extends DialogFragment {
     }
     public ChangeDialog changeDialog;
 
-
+    //if user presses cancel button on any of the dialogs, we call this method
     public interface CancelAllTripDialogs{
         void onButtonCancel();
     }
 
     public CancelAllTripDialogs cancelAllTripDialogs;
 
-
+    //button appears when driver is driving(going to passenger's location and going to set destination)
     public interface GetDirection{
         void onButtonGetDirection(double lat, double lng);
     }
 
     public GetDirection getDirection;
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -101,7 +104,7 @@ public class TripDialogFragment extends DialogFragment {
 
         tripDialogView = inflater.inflate(R.layout.during_trip_dialog, null);//set view for dialog(ride requests)
         getDialog().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         heading = tripDialogView.findViewById(R.id.txtDuringTripHeading);
         name = tripDialogView.findViewById(R.id.txtDuringTripPassengerName);
         totalMiles = tripDialogView.findViewById(R.id.txtDuringTripDistance);

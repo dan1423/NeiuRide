@@ -34,28 +34,36 @@ public class SplashScreen extends Activity {
     private final int SPLASH_SCREEN_DELAY_LENGTH = 1000;
     private static final String TAG = "TEST ACTIVITY";
     private static final int ERROR_DIALOG_REQUEST = 9001;
+    LocationManager locMan;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
 
-      /*  if(isServicesOK()) {
-            checkIfUserIsLoggedIn();
-            statusCheck();
-        }*/
+        locMan  = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        if(!locMan.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            enableProvider();
+        }else{
+           startLoadingScreen();
+        }
+     //   enableProvider();
 
-      //show the loading screen for delay length
-       new Handler().postDelayed(new Runnable(){
+
+
+    }
+
+    private void startLoadingScreen(){
+        new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {
-                    checkIfUserIsLoggedIn();
+                checkIfUserIsLoggedIn();
 
 
             }
         }, SPLASH_SCREEN_DELAY_LENGTH);
-
     }
+
 
     //if user is logged in, open homepage, otherwise send to log in page
     private void checkIfUserIsLoggedIn() {
@@ -89,8 +97,8 @@ public class SplashScreen extends Activity {
         startActivity(intent);
     }
 
-    //check if user's device allows GPS location and goole services
-    public boolean isServicesOK(){
+    //check if user's device allows GPS location and google services
+   /* public boolean isServicesOK(){
         Log.d(TAG,"checking version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(SplashScreen.this);
@@ -102,7 +110,7 @@ public class SplashScreen extends Activity {
             Log.d(TAG,"Fixable error");
 
         }else{
-            Log.d(TAG,"CAn't maqke map request");
+            Log.d(TAG,"Can't make map request");
         }
         return false;
     }
@@ -132,5 +140,11 @@ public class SplashScreen extends Activity {
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }*/
+
+    private void enableProvider(){
+        Intent gpsOptionsIntent = new Intent(
+                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(gpsOptionsIntent);
     }
 }
